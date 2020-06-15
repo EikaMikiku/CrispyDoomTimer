@@ -23,7 +23,7 @@ namespace CrispyDoomSplits {
                 }
                 if(isLabel) {
                     //Label is the first data line
-                    Label = new Text(line.Trim(), Settings.Font, 16);
+                    Label = new Text(line.Trim(), Settings.Font, Settings.FontSize);
                     Label.Position = new Vector2f(0, 0);
                     isLabel = false;
                 } else {

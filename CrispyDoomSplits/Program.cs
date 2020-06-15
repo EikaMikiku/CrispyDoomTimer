@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
@@ -7,6 +8,10 @@ using SFML.Window;
 namespace CrispyDoomSplits {
     class Program {
         static void Main(string[] args) {
+            //Load settings
+            LoadSettings();
+
+            //Init
             var showWaiting = true;
             var wnd = new RenderWindow(new VideoMode(Settings.Width, Settings.Height), "CrispyDoom Timer By Eika");
 
@@ -29,7 +34,7 @@ namespace CrispyDoomSplits {
                     }
                 } else {
                     showWaiting = false; //Only show waiting first time we load things, no need to show it every reset
-                    
+
                     int mapId = pm.ReadMapId();
                     int leveltime = pm.ReadLevelTime();
 
@@ -63,6 +68,35 @@ namespace CrispyDoomSplits {
                     new Vector2f(wnd.Size.X, wnd.Size.Y)
                 )
             );
+        }
+
+        static void LoadSettings() {
+            string text = File.ReadAllText("config.tsv");
+            string[] lines = text.Split('\n');
+            foreach(string line in lines) {
+                string[] s = line.Split('=');
+                string val = s[1].Trim();
+                switch(s[0]) {
+                    case "WIDTH":
+                        Settings.Width = UInt32.Parse(val);
+                        break;
+                    case "HEIGHT":
+                        Settings.Height = UInt32.Parse(val);
+                        break;
+                    case "FONT":
+                        Settings.Font = new Font(val);
+                        break;
+                    case "FONTSIZE":
+                        Settings.FontSize = UInt32.Parse(val);
+                        break;
+                    case "LEVEL_TIME_ADDRESS":
+                        Settings.LevelTimeAddress = Convert.ToInt32(val, 16);
+                        break;
+                    case "MAP_ID_ADDRESS":
+                        Settings.MapIdAddress = Convert.ToInt32(val, 16);
+                        break;
+                }
+            }
         }
     }
 }

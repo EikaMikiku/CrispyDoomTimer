@@ -6,8 +6,6 @@ using System.Text;
 namespace CrispyDoomSplits {
     class ProcessReader {
         const int PROCESS_WM_READ = 0x0010;
-        const int MAP_ID = 0x18FEC4;
-        const int LEVEL_TIME = 0x1A1070;
         
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
@@ -39,7 +37,7 @@ namespace CrispyDoomSplits {
             }
             int bytesRead = 0;
             byte[] buffer = new byte[4];
-            ReadProcessMemory((int)ProcessHandle, MAP_ID + BaseAddress.Value.ToInt32(), buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory((int)ProcessHandle, Settings.MapIdAddress + BaseAddress.Value.ToInt32(), buffer, buffer.Length, ref bytesRead);
             return BitConverter.ToInt32(buffer, 0);
         }
 
@@ -49,7 +47,7 @@ namespace CrispyDoomSplits {
             }
             int bytesRead = 0;
             byte[] buffer = new byte[4];
-            ReadProcessMemory((int)ProcessHandle, LEVEL_TIME + BaseAddress.Value.ToInt32(), buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory((int)ProcessHandle, Settings.LevelTimeAddress + BaseAddress.Value.ToInt32(), buffer, buffer.Length, ref bytesRead);
             return BitConverter.ToInt32(buffer, 0);
         }
     }
