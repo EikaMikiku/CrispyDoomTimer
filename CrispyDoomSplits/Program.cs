@@ -43,7 +43,6 @@ namespace CrispyDoomSplits {
                         sm.Splits[sm.CurrentSplit].SetRunTime(leveltime);
                     } else if(mapId < 0) {
                         //Means process exited
-                        sm.ResetSplits();
                         pm.Ok = false; //Reload process reader
                     }
                 }

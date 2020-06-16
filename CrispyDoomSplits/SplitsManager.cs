@@ -24,6 +24,11 @@ namespace CrispyDoomSplits {
         }
 
         public void DrawSplits(RenderWindow wnd) {
+            if(CurrentSplit == 0) {
+                for(var i = 1; i < Splits.Count; i++) {
+                    Splits[i].RunTime = "00:00";
+                }
+            }
             int totalSplitTime = 0;
             int totalCurrentTime = 0;
 
@@ -132,18 +137,11 @@ namespace CrispyDoomSplits {
             return (diff > -1 ? "+" + diff : diff.ToString());
         }
 
-        public void ResetSplits() {
-            foreach(Split s in Splits) {
-                s.RunTime = "00:00";
-            }
-            CurrentSplit = -1;
-        }
-
         private string GetAccumDelta() {
             var sum = 0;
 
-            foreach(Split split in Splits) {
-                var diff = GetSecDifference(split);
+            for(var i = 0; i < CurrentSplit; i++) {
+                var diff = GetSecDifference(Splits[i]);
                 if(diff.Length > 0) {
                     var idiff = Int32.Parse(diff);
                     sum += idiff;
