@@ -125,7 +125,7 @@ namespace CrispyDoomSplits {
         }
 
         private string GetSecDifference(Split split) {
-            if(split.GetRunSeconds() == 0) {
+            if(split.GetRunSeconds() == 0 && Splits.IndexOf(split) > CurrentSplit) {
                 return "";
             }
             var diff = split.GetRunSeconds() - split.GetSplitSeconds();
@@ -136,7 +136,21 @@ namespace CrispyDoomSplits {
             foreach(Split s in Splits) {
                 s.RunTime = "00:00";
             }
-            CurrentSplit = 0;
+            CurrentSplit = -1;
+        }
+
+        private string GetAccumDelta() {
+            var sum = 0;
+
+            foreach(Split split in Splits) {
+                var diff = GetSecDifference(split);
+                if(diff.Length > 0) {
+                    var idiff = Int32.Parse(diff);
+                    sum += idiff;
+                }
+            }
+
+            return (sum > -1 ? "+" + sum : sum.ToString());
         }
     }
 }
