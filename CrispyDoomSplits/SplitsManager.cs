@@ -7,7 +7,6 @@ using System.IO;
 namespace CrispyDoomSplits {
     class SplitsManager {
         public int CurrentSplit = 0;
-        public Text Label;
         public List<Split> Splits = new List<Split>();
         private string Filename = "splits.tsv";
 
@@ -15,20 +14,12 @@ namespace CrispyDoomSplits {
             //Load splits from file
             string text = File.ReadAllText(Filename);
             string[] lines = text.Split('\n');
-            bool isLabel = true;
 
             foreach(string line in lines) {
                 if(line.StartsWith("#") || line.Trim().Length == 0) {
                     continue; //Skip comments or empty lines
                 }
-                if(isLabel) {
-                    //Label is the first data line
-                    Label = new Text(line.Trim(), Settings.Font, Settings.FontSize);
-                    Label.Position = new Vector2f(0, 0);
-                    isLabel = false;
-                } else {
-                    Splits.Add(new Split(line.Trim()));
-                }
+                Splits.Add(new Split(line.Trim()));
             }
         }
 
@@ -36,38 +27,37 @@ namespace CrispyDoomSplits {
             int totalSplitTime = 0;
             int totalCurrentTime = 0;
 
-            //Render Label
-            Label.FillColor = Color.White;
-            wnd.Draw(Label);
+            const int COL1 = 19;
+            const int ROWHEIGHT = 13;
+            const int SEPOFFSET = 1;
+            const int AFTERSEPOFFSET = 3;
 
-            var yOffset = 18f;
+            var yOffset = 0;
 
             //Header
-            Text header = new Text("Level".PadRight(21, ' ') + "Split   Run     Difference", Settings.Font, Settings.FontSize);
+            Text header = new Text("Level".PadRight(COL1) + "Split  Run    Delta", Settings.Font, Settings.FontSize);
             header.Position = new Vector2f(0, yOffset);
             wnd.Draw(header);
 
-            yOffset += 2f;
+            yOffset += SEPOFFSET;
 
             //Separator
-            Text sep = new Text("".PadRight(47, '_'), Settings.Font, Settings.FontSize);
-            sep.Position = new Vector2f(0, yOffset);
+            Text sep = new Text("".PadRight(150, '_'), Settings.Font, Settings.FontSize);
+            sep.Position = new Vector2f(-50, yOffset);
             wnd.Draw(sep);
 
-            yOffset += 12f;
+            yOffset += ROWHEIGHT + AFTERSEPOFFSET;
 
             //Splits
             foreach(Split s in Splits) {
                 var idx = Splits.IndexOf(s);
-                if(idx > CurrentSplit) {
-                    //Future split, reset RunTime in case of restarts
-                    s.RunTime = "00:00";
-                }
 
                 //Drawing label, split time, run time
-                var str = ((idx + 1) + ")").PadRight(4, ' ');
-                str += s.Label.PadRight(17, ' ');
-                str += s.SplitTime + "   " + s.RunTime;// + "   " + GetSecDifference(s);
+                var str = s.Label.PadRight(COL1) + s.SplitTime;
+                if(idx <= CurrentSplit && CurrentSplit >= 0) {
+                    //Show run time on past and current splits
+                    str += "  " + s.RunTime;
+                }
                 Text t = new Text(str, Settings.Font, Settings.FontSize);
                 t.Position = new Vector2f(0, yOffset);
                 wnd.Draw(t);
@@ -75,10 +65,7 @@ namespace CrispyDoomSplits {
                 //Drawing colored sec difference
                 string d = GetSecDifference(s);
                 if(d.Length > 0) {
-                    str = "".PadRight(37) + d;
-                    if(CurrentSplit == idx) {
-                        str += "  <=";
-                    }
+                    str = "".PadRight(COL1 + 14) + d;
 
                     Text diff = new Text(str, Settings.Font, Settings.FontSize);
                     diff.Position = new Vector2f(0, yOffset); //Same position, but padded gives consistent spacing
@@ -86,7 +73,7 @@ namespace CrispyDoomSplits {
                     int int_d = Int32.Parse(d);
                     if(str.Contains("-")) {
                         diff.FillColor = Color.Green;
-                    } else if(int_d > 10) {
+                    } else if(int_d > 5) {
                         diff.FillColor = Color.Red;
                     } else {
                         diff.FillColor = Color.Yellow;
@@ -94,7 +81,7 @@ namespace CrispyDoomSplits {
                     wnd.Draw(diff);
                 }
 
-                yOffset += 12f;
+                yOffset += ROWHEIGHT;
 
                 //Adding to totals
                 totalSplitTime += s.GetSplitSeconds();
@@ -102,13 +89,30 @@ namespace CrispyDoomSplits {
             }
 
             //Separator
-            sep.Position = new Vector2f(0, yOffset - 10f);
+            yOffset += SEPOFFSET - ROWHEIGHT;
+            sep.Position = new Vector2f(-50, yOffset);
             wnd.Draw(sep);
 
             //Totals
-            Text totals = new Text("Totals:  " + GetTimeFromSeconds(totalSplitTime) + " vs " + GetTimeFromSeconds(totalCurrentTime), Settings.Font, Settings.FontSize * 2);
-            totals.Style = (Text.Styles.Underlined);
-            totals.Position = new Vector2f(0, yOffset);
+            yOffset += ROWHEIGHT;
+            string tstr = "".PadRight(COL1) + GetTimeFromSeconds(totalSplitTime);
+            if(CurrentSplit >= 0) {
+                tstr += "  " + GetTimeFromSeconds(totalCurrentTime);
+                string accum = GetAccumDelta();
+                Text totalAccum = new Text("".PadRight(COL1 + 14) + accum, Settings.Font, Settings.FontSize);
+                int int_d = Int32.Parse(accum);
+                if(accum.Contains("-")) {
+                    totalAccum.FillColor = Color.Green;
+                } else if(int_d > 5) {
+                    totalAccum.FillColor = Color.Red;
+                } else {
+                    totalAccum.FillColor = Color.Yellow;
+                }
+                totalAccum.Position = new Vector2f(0, yOffset + AFTERSEPOFFSET);
+                wnd.Draw(totalAccum);
+            }
+            Text totals = new Text(tstr, Settings.Font, Settings.FontSize);
+            totals.Position = new Vector2f(0, yOffset + AFTERSEPOFFSET);
             wnd.Draw(totals);
 
         }

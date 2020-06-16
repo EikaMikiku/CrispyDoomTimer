@@ -101,6 +101,9 @@
     <None Include="config.tsv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Consolas.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="ProggyCleanSZ.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,34 +1,31 @@
-#Label
-Doom 2 UV Speed. Splits from current WR by eLim.
-
-#Label	TargetSplit
-1	Entryway	00:06
-2	Underhalls	00:34
-3	Gauntlet	00:31
-4	Focus	00:26
-5	Waste Tunnels	00:27
-6	Crusher	00:54
-7	Dead Simple	00:12
-8	Tricks & Traps	00:24
-9	Pit	00:53
-10	Refueling Base	00:34
-11	Circle of Death	00:34
-12	Factory	00:49
-13	Downtown	01:07
-14	Inmost Dens	00:18
-15	Industrial Zone	00:58
-16	Suburbs	00:13
-17	Tenements	01:11
-18	Courtyard	00:24
-19	Citadel	00:40
-20	Gotcha!	00:37
-21	Nirvana	00:12
-22	Catacombs	00:26
-23	Barrels o' Fun	00:42
-24	Chasm	00:38
-25	Bloodfalls	00:44
-26	Abandoned Mines	00:37
-27	Monster Condo	00:16
-28	Spirit World	00:41
-29	Living End	01:36
-30	Icon of Sin	00:33
+#SplitName	TargetTime
+1  Entryway	00:06
+2  Glidehalls	00:34
+3  Gauntlet	00:31
+4  Focus	00:26
+5  Waste Tunnels	00:27
+6  Crusher	00:54
+7  Dead Simple	00:12
+8  Tricks & Blocks	00:24
+9  Pit	00:53
+10 Refueling Base	00:34
+11 Circle of Death	00:34
+12 Tomato Factory	00:49
+13 Downtown	01:07
+14 Inmost Dens	00:18
+15 Industrial Zone	00:58
+16 Suburbs	00:13
+17 Tenements	01:11
+18 Courtyard	00:24
+19 Citadel	00:40
+20 Gotcha!	00:37
+21 Nirvana	00:12
+22 Catacombs	00:26
+23 Barrels o' Fun	00:42
+24 Ebola LUL	00:38
+25 Bloodfalls	00:44
+26 Abandoned Mines	00:37
+27 Monster Condo	00:16
+28 Spirit World	00:41
+29 Living End	01:36
+30 Icon of Sin	00:33

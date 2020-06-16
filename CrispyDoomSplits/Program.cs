@@ -74,6 +74,9 @@ namespace CrispyDoomSplits {
             string text = File.ReadAllText("config.tsv");
             string[] lines = text.Split('\n');
             foreach(string line in lines) {
+                if(line.StartsWith("#") || line.Trim().Length == 0) {
+                    continue; //Skip comments or empty lines
+                }
                 string[] s = line.Split('=');
                 string val = s[1].Trim();
                 switch(s[0]) {

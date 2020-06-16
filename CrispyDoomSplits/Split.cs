@@ -13,8 +13,8 @@ namespace CrispyDoomSplits {
 
         public Split(string data) {
             string[] splitData = data.Split('\t');
-            Label = splitData[1];
-            SplitTime = splitData[2];
+            Label = splitData[0];
+            SplitTime = splitData[1];
         }
 
         public int GetSplitSeconds() {
