@@ -92,8 +92,8 @@ namespace CrispyDoomSplits {
                 yOffset += ROWHEIGHT;
 
                 //Adding to totals
+                totalSplitTime += s.GetSplitSeconds();
                 if(s.RunTicks != 0) {
-                    totalSplitTime += s.GetSplitSeconds();
                     totalCurrentTime += s.GetRunSeconds();
                 }
             }

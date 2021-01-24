@@ -16,10 +16,10 @@ namespace CrispyDoomSplits {
 
         public Split(string data) {
             string[] splitData = data.Split('\t');
-            Label = splitData[0];
-            SplitTime = splitData[1];
+            Label = splitData[0].Trim();
+            SplitTime = splitData[1].Trim();
             if(splitData.Length == 3) {
-                PersonalBestTime = splitData[2];
+                PersonalBestTime = splitData[2].Trim();
             }
         }
 
