@@ -23,7 +23,8 @@ namespace CrispyDoomSplits {
             }
         }
 
-        public void DrawSplits(RenderWindow wnd) {
+        public void DrawSplits(RenderWindow wnd, bool isEndScreen) {
+            //Resets split times when quick restarting
             if(CurrentSplit == 0) {
                 for(var i = 1; i < Splits.Count; i++) {
                     Splits[i].RunTime = "00:00";
@@ -59,7 +60,7 @@ namespace CrispyDoomSplits {
 
                 //Drawing label, split time, run time
                 var str = s.Label.PadRight(COL1) + s.SplitTime;
-                if(idx <= CurrentSplit && CurrentSplit >= 0) {
+                if(idx <= CurrentSplit && CurrentSplit >= 0 && s.RunTime != "00:00") {
                     //Show run time on past and current splits
                     str += "  " + s.RunTime;
                 }
@@ -74,23 +75,17 @@ namespace CrispyDoomSplits {
 
                     Text diff = new Text(str, Settings.Font, Settings.FontSize);
                     diff.Position = new Vector2f(0, yOffset); //Same position, but padded gives consistent spacing
-
-                    int int_d = Int32.Parse(d);
-                    if(str.Contains("-")) {
-                        diff.FillColor = Color.Green;
-                    } else if(int_d > 5) {
-                        diff.FillColor = Color.Red;
-                    } else {
-                        diff.FillColor = Color.Yellow;
-                    }
+                    diff.FillColor = GetDeltaColor(Int32.Parse(d));
                     wnd.Draw(diff);
                 }
 
                 yOffset += ROWHEIGHT;
 
                 //Adding to totals
-                totalSplitTime += s.GetSplitSeconds();
-                totalCurrentTime += s.GetRunSeconds();
+                if(s.RunTime != "00:00") {
+                    totalSplitTime += s.GetSplitSeconds();
+                    totalCurrentTime += s.GetRunSeconds();
+                }
             }
 
             //Separator
@@ -103,16 +98,9 @@ namespace CrispyDoomSplits {
             string tstr = "".PadRight(COL1) + GetTimeFromSeconds(totalSplitTime);
             if(CurrentSplit >= 0) {
                 tstr += "  " + GetTimeFromSeconds(totalCurrentTime);
-                string accum = GetAccumDelta();
+                string accum = GetAccumDelta(isEndScreen);
                 Text totalAccum = new Text("".PadRight(COL1 + 14) + accum, Settings.Font, Settings.FontSize);
-                int int_d = Int32.Parse(accum);
-                if(accum.Contains("-")) {
-                    totalAccum.FillColor = Color.Green;
-                } else if(int_d > 5) {
-                    totalAccum.FillColor = Color.Red;
-                } else {
-                    totalAccum.FillColor = Color.Yellow;
-                }
+                totalAccum.FillColor = GetDeltaColor(Int32.Parse(accum));
                 totalAccum.Position = new Vector2f(0, yOffset + AFTERSEPOFFSET);
                 wnd.Draw(totalAccum);
             }
@@ -130,17 +118,19 @@ namespace CrispyDoomSplits {
         }
 
         private string GetSecDifference(Split split) {
-            if(split.GetRunSeconds() == 0 && Splits.IndexOf(split) > CurrentSplit) {
+            if(split.GetRunSeconds() == 0 || Splits.IndexOf(split) > CurrentSplit) {
                 return "";
             }
             var diff = split.GetRunSeconds() - split.GetSplitSeconds();
             return (diff > -1 ? "+" + diff : diff.ToString());
         }
 
-        private string GetAccumDelta() {
+        private string GetAccumDelta(bool isEndScreen) {
             var sum = 0;
+            //Include current split if end screen
+            var lim = isEndScreen ? CurrentSplit + 1 : CurrentSplit;
 
-            for(var i = 0; i < CurrentSplit; i++) {
+            for(var i = 0; i < lim; i++) {
                 var diff = GetSecDifference(Splits[i]);
                 if(diff.Length > 0) {
                     var idiff = Int32.Parse(diff);
@@ -149,6 +139,16 @@ namespace CrispyDoomSplits {
             }
 
             return (sum > -1 ? "+" + sum : sum.ToString());
+        }
+
+        private Color GetDeltaColor(int delta) {
+            if(delta > Settings.BadSplitWhenOver) {
+                return Settings.BadSplitColor;
+            } else if(delta < 0) {
+                return Settings.GoodSplitColor;
+            }
+
+            return Settings.OKSplitColor;
         }
     }
 }

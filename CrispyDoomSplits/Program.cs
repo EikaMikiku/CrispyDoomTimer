@@ -9,7 +9,7 @@ namespace CrispyDoomSplits {
     class Program {
         static void Main(string[] args) {
             //Load settings
-            LoadSettings();
+            Settings.LoadSettings();
 
             //Init
             var showWaiting = true;
@@ -21,6 +21,7 @@ namespace CrispyDoomSplits {
 
             var sm = new SplitsManager();
             var pm = new ProcessReader();
+            var isEndScreen = false;
 
             while(wnd.IsOpen) {
                 wnd.DispatchEvents();
@@ -37,6 +38,7 @@ namespace CrispyDoomSplits {
 
                     int mapId = pm.ReadMapId();
                     int leveltime = pm.ReadLevelTime();
+                    isEndScreen = pm.ReadEndScreen() == 1;
 
                     if(mapId > 0) {
                         sm.CurrentSplit = mapId - 1;
@@ -47,7 +49,7 @@ namespace CrispyDoomSplits {
                     }
                 }
                 if(pm.Ok || !showWaiting) {
-                    sm.DrawSplits(wnd);
+                    sm.DrawSplits(wnd, isEndScreen);
                 }
                 wnd.Display();
             }
@@ -67,38 +69,6 @@ namespace CrispyDoomSplits {
                     new Vector2f(wnd.Size.X, wnd.Size.Y)
                 )
             );
-        }
-
-        static void LoadSettings() {
-            string text = File.ReadAllText("config.tsv");
-            string[] lines = text.Split('\n');
-            foreach(string line in lines) {
-                if(line.StartsWith("#") || line.Trim().Length == 0) {
-                    continue; //Skip comments or empty lines
-                }
-                string[] s = line.Split('=');
-                string val = s[1].Trim();
-                switch(s[0]) {
-                    case "WIDTH":
-                        Settings.Width = UInt32.Parse(val);
-                        break;
-                    case "HEIGHT":
-                        Settings.Height = UInt32.Parse(val);
-                        break;
-                    case "FONT":
-                        Settings.Font = new Font(val);
-                        break;
-                    case "FONTSIZE":
-                        Settings.FontSize = UInt32.Parse(val);
-                        break;
-                    case "LEVEL_TIME_ADDRESS":
-                        Settings.LevelTimeAddress = Convert.ToInt32(val, 16);
-                        break;
-                    case "MAP_ID_ADDRESS":
-                        Settings.MapIdAddress = Convert.ToInt32(val, 16);
-                        break;
-                }
-            }
         }
     }
 }

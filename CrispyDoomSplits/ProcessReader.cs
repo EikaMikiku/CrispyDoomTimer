@@ -50,5 +50,15 @@ namespace CrispyDoomSplits {
             ReadProcessMemory((int)ProcessHandle, Settings.LevelTimeAddress + BaseAddress.Value.ToInt32(), buffer, buffer.Length, ref bytesRead);
             return BitConverter.ToInt32(buffer, 0);
         }
+
+        public int ReadEndScreen() {
+            if(Process.HasExited) {
+                return -1;
+            }
+            int bytesRead = 0;
+            byte[] buffer = new byte[4];
+            ReadProcessMemory((int)ProcessHandle, Settings.EndScreenAddress + BaseAddress.Value.ToInt32(), buffer, buffer.Length, ref bytesRead);
+            return BitConverter.ToInt32(buffer, 0);
+        }
     }
 }
