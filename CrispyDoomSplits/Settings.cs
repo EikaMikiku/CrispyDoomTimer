@@ -18,6 +18,7 @@ namespace CrispyDoomSplits {
         public static Color GoodSplitColor = Color.Green;
         public static Color OKSplitColor = Color.Yellow;
         public static Color BadSplitColor = Color.Red;
+        public static Color PBSplitColor = Color.Magenta;
 
         public static int BadSplitWhenOver = 5;
 
@@ -51,6 +52,8 @@ namespace CrispyDoomSplits {
                         Settings.OKSplitColor = new Color(Convert.ToUInt32(val, 16)); break;
                     case "BAD_SPLIT_COLOR":
                         Settings.BadSplitColor = new Color(Convert.ToUInt32(val, 16)); break;
+                    case "PB_SPLIT_COLOR":
+                        Settings.PBSplitColor = new Color(Convert.ToUInt32(val, 16)); break;
                     case "BAD_SPLIT_WHEN_OVER":
                         Settings.BadSplitWhenOver = Int32.Parse(val); break;
                 }

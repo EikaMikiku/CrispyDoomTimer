@@ -28,6 +28,7 @@ namespace CrispyDoomSplits {
             if(CurrentSplit == 0) {
                 for(var i = 1; i < Splits.Count; i++) {
                     Splits[i].RunTime = "00:00";
+                    Splits[i].RunTicks = 0;
                 }
             }
             int totalSplitTime = 0;
@@ -41,7 +42,7 @@ namespace CrispyDoomSplits {
             var yOffset = 0;
 
             //Header
-            Text header = new Text("Level".PadRight(COL1) + "Split  Run    Delta", Settings.Font, Settings.FontSize);
+            Text header = new Text("Level".PadRight(COL1) + "Split  Run       Delta", Settings.Font, Settings.FontSize);
             header.Position = new Vector2f(0, yOffset);
             wnd.Draw(header);
 
@@ -58,20 +59,29 @@ namespace CrispyDoomSplits {
             foreach(Split s in Splits) {
                 var idx = Splits.IndexOf(s);
 
-                //Drawing label, split time, run time
+                //Drawing label, split time
                 var str = s.Label.PadRight(COL1) + s.SplitTime;
-                if(idx <= CurrentSplit && CurrentSplit >= 0 && s.RunTime != "00:00") {
-                    //Show run time on past and current splits
-                    str += "  " + s.RunTime;
-                }
+
                 Text t = new Text(str, Settings.Font, Settings.FontSize);
                 t.Position = new Vector2f(0, yOffset);
                 wnd.Draw(t);
 
+                //Drawing run time
+                if(idx <= CurrentSplit && CurrentSplit >= 0 && s.RunTicks != 0) {
+                    //Show run time on past and current splits
+                    str = "".PadRight(COL1 + 7) + s.GetFullRunTime();
+                    Text trun = new Text(str, Settings.Font, Settings.FontSize);
+                    trun.Position = new Vector2f(0, yOffset);
+                    if(s.IsPersonalBest && (isEndScreen || CurrentSplit > idx)) {
+                        trun.FillColor = Settings.PBSplitColor;
+                    }
+                    wnd.Draw(trun);
+                }
+
                 //Drawing colored sec difference
                 string d = GetSecDifference(s);
                 if(d.Length > 0) {
-                    str = "".PadRight(COL1 + 14) + d;
+                    str = "".PadRight(COL1 + 17) + d;
 
                     Text diff = new Text(str, Settings.Font, Settings.FontSize);
                     diff.Position = new Vector2f(0, yOffset); //Same position, but padded gives consistent spacing
@@ -82,7 +92,7 @@ namespace CrispyDoomSplits {
                 yOffset += ROWHEIGHT;
 
                 //Adding to totals
-                if(s.RunTime != "00:00") {
+                if(s.RunTicks != 0) {
                     totalSplitTime += s.GetSplitSeconds();
                     totalCurrentTime += s.GetRunSeconds();
                 }
@@ -99,7 +109,7 @@ namespace CrispyDoomSplits {
             if(CurrentSplit >= 0) {
                 tstr += "  " + GetTimeFromSeconds(totalCurrentTime);
                 string accum = GetAccumDelta(isEndScreen);
-                Text totalAccum = new Text("".PadRight(COL1 + 14) + accum, Settings.Font, Settings.FontSize);
+                Text totalAccum = new Text("".PadRight(COL1 + 17) + accum, Settings.Font, Settings.FontSize);
                 totalAccum.FillColor = GetDeltaColor(Int32.Parse(accum));
                 totalAccum.Position = new Vector2f(0, yOffset + AFTERSEPOFFSET);
                 wnd.Draw(totalAccum);
